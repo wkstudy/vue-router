@@ -7,6 +7,7 @@ export function runQueue (queue: Array<?NavigationGuard>, fn: Function, cb: Func
     } else {
       if (queue[index]) {
         fn(queue[index], () => {
+          // 默认执行下一个index
           step(index + 1)
         })
       } else {

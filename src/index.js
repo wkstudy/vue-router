@@ -48,6 +48,7 @@ export default class VueRouter {
     this.beforeHooks = []
     this.resolveHooks = []
     this.afterHooks = []
+    // 根据routes生成路由相关的信息和相关操作
     this.matcher = createMatcher(options.routes || [], this)
 
     let mode = options.mode || 'hash'
@@ -93,7 +94,7 @@ export default class VueRouter {
         `not installed. Make sure to call \`Vue.use(VueRouter)\` ` +
           `before creating root instance.`
       )
-
+    // 存储vue实例
     this.apps.push(app)
 
     // set up app destroyed handler

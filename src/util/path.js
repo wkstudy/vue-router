@@ -68,7 +68,7 @@ export function parsePath (path: string): {
     hash
   }
 }
-
+// 格式化 //  或者 /  / 这种情况
 export function cleanPath (path: string): string {
   return path.replace(/\/(?:\s*\/)+/g, '/')
 }

@@ -27,6 +27,7 @@ export function createRouteMap (
   })
 
   // ensure wildcard routes are always at the end
+  // 调增位置，把“*” 放到最后一个
   for (let i = 0, l = pathList.length; i < l; i++) {
     if (pathList[i] === '*') {
       pathList.push(pathList.splice(i, 1)[0])
@@ -38,12 +39,15 @@ export function createRouteMap (
   if (process.env.NODE_ENV === 'development') {
     // warn if routes do not include leading slashes
     const found = pathList
-    // check for missing leading slash
+      // check for missing leading slash
       .filter(path => path && path.charAt(0) !== '*' && path.charAt(0) !== '/')
 
     if (found.length > 0) {
       const pathNames = found.map(path => `- ${path}`).join('\n')
-      warn(false, `Non-nested routes must include a leading slash character. Fix the following routes: \n${pathNames}`)
+      warn(
+        false,
+        `Non-nested routes must include a leading slash character. Fix the following routes: \n${pathNames}`
+      )
     }
   }
 
@@ -208,6 +212,7 @@ function compileRouteRegex (
   return regex
 }
 
+// 拼接路径  parent/path
 function normalizePath (
   path: string,
   parent?: RouteRecord,

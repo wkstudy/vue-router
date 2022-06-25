@@ -27,9 +27,11 @@ export function normalizeLocation (
   }
 
   // relative params
+  // 只有参数改变
   if (!next.path && next.params && current) {
     next = extend({}, next)
     next._normalized = true
+    // 整合跳转前后两个路由的params
     const params: any = extend(extend({}, current.params), next.params)
     if (current.name) {
       next.name = current.name

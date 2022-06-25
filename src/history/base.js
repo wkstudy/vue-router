@@ -87,6 +87,7 @@ export class History {
     let route
     // catch redirect option https://github.com/vuejs/vue-router/issues/3201
     try {
+      // 即this.router.matcher.match(),根据location创建一个route对象
       route = this.router.match(location, this.current)
     } catch (e) {
       this.errorCbs.forEach(cb => {
@@ -99,6 +100,7 @@ export class History {
     this.confirmTransition(
       route,
       () => {
+        // 更新router对象
         this.updateRoute(route)
         onComplete && onComplete(route)
         this.ensureURL()
@@ -134,6 +136,7 @@ export class History {
     )
   }
 
+  // 执行所有的钩子（路由里定义的和组件里定义的）
   confirmTransition (route: Route, onComplete: Function, onAbort?: Function) {
     const current = this.current
     this.pending = route
@@ -175,6 +178,7 @@ export class History {
       route.matched
     )
 
+    //  push执行时的各种钩子函数（包括组件里定义的、路由里定义的）
     const queue: Array<?NavigationGuard> = [].concat(
       // in-component leave guards
       extractLeaveGuards(deactivated),
@@ -193,6 +197,7 @@ export class History {
         return abort(createNavigationCancelledError(current, route))
       }
       try {
+        // 默认（不传to）是走queue里的下一个钩子，但如果用户传了to，就会走to的逻辑
         hook(route, current, (to: any) => {
           if (to === false) {
             // next(false) -> abort navigation, ensure current URL
@@ -208,12 +213,14 @@ export class History {
           ) {
             // next('/') or next({ path: '/' }) -> redirect
             abort(createNavigationRedirectedError(current, route))
+            // 不再继续执行，走新的逻辑
             if (typeof to === 'object' && to.replace) {
               this.replace(to)
             } else {
               this.push(to)
             }
           } else {
+            // 默认是执行queue里的下一个钩子
             // confirm transition and pass on the value
             next(to)
           }
@@ -233,6 +240,7 @@ export class History {
           return abort(createNavigationCancelledError(current, route))
         }
         this.pending = null
+        // 所有的钩子执行完了后走onComplete
         onComplete(route)
         if (this.router.app) {
           this.router.app.$nextTick(() => {
@@ -287,6 +295,7 @@ function normalizeBase (base: ?string): string {
   return base.replace(/\/$/, '')
 }
 
+//  找到新旧路由中那些是一样的，那些是正在变化的，那些是不需要的
 function resolveQueue (
   current: Array<RouteRecord>,
   next: Array<RouteRecord>
@@ -316,13 +325,16 @@ function extractGuards (
   reverse?: boolean
 ): Array<?Function> {
   const guards = flatMapComponents(records, (def, instance, match, key) => {
+    // 拿到在def（Vue）组件里定义的name（路由守卫钩子）
     const guard = extractGuard(def, name)
     if (guard) {
+      // 返回路由守卫钩子
       return Array.isArray(guard)
         ? guard.map(guard => bind(guard, instance, match, key))
         : bind(guard, instance, match, key)
     }
   })
+  // 返回所有的执行的组件
   return flatten(reverse ? guards.reverse() : guards)
 }
 

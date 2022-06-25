@@ -17,6 +17,7 @@ export class HTML5History extends History {
   }
 
   setupListeners () {
+    // 坚挺路由，有改变了就切换到对应的组件
     if (this.listeners.length > 0) {
       return
     }
@@ -58,7 +59,7 @@ export class HTML5History extends History {
   push (location: RawLocation, onComplete?: Function, onAbort?: Function) {
     const { current: fromRoute } = this
     this.transitionTo(location, route => {
-      pushState(cleanPath(this.base + route.fullPath))
+      pushState(cleanPath(this.base + route.fullPath)) // 同步到url上
       handleScroll(this.router, route, fromRoute, false)
       onComplete && onComplete(route)
     }, onAbort)

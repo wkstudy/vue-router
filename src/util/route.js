@@ -26,6 +26,7 @@ export function createRoute (
     query,
     params: location.params || {},
     fullPath: getFullPath(location, stringifyQuery),
+    // 记录[record.parent.parent.parent,record.parent.parent, record.parent, record]
     matched: record ? formatMatch(record) : []
   }
   if (redirectedFrom) {

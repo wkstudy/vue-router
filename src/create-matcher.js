@@ -20,6 +20,7 @@ export function createMatcher (
   routes: Array<RouteConfig>,
   router: VueRouter
 ): Matcher {
+  // 把用户传入的routes经过一些列处理存到pathList, pathMap, nameMap
   const { pathList, pathMap, nameMap } = createRouteMap(routes)
 
   function addRoutes (routes) {
@@ -53,6 +54,7 @@ export function createMatcher (
     currentRoute?: Route,
     redirectedFrom?: Location
   ): Route {
+    // 把raw格式化为一个路由对象
     const location = normalizeLocation(raw, currentRoute, false, router)
     const { name } = location
 
