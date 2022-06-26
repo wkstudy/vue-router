@@ -29,8 +29,10 @@ export function install (Vue) {
         this._router.init(this)
         Vue.util.defineReactive(this, '_route', this._router.history.current)
       } else {
+        // 向上一层一层 直到最外层的vue
         this._routerRoot = (this.$parent && this.$parent._routerRoot) || this
       }
+      // 在router-view中调用
       registerInstance(this, this)
     },
     destroyed () {

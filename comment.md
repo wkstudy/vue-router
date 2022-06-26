@@ -2,7 +2,7 @@
 <!-- 1. `this.$router`访问的是啥？ -->
 2. 滚动的先不看
 3. `this.$router.push()`看源码好像就是执行了下钩子函数，并同步到url上，没看到组件是这么切换的
-   1. 那就是 `<router-view/>`在做的是事情了，看来vuerouter主要是要一个要一个路由配置对象+`<router-view/>`就可以了，<router-link/>其实是可有可无的
+   1. 那就是 `<router-view/>`在做的事情了，看来vuerouter主要是要一个要一个路由配置对象+`<router-view/>`就可以了，<router-link/>其实是可有可无的
 
 
 ## vue-router 做了哪些事
@@ -66,3 +66,37 @@ new Vue({
   ```
   4. confirmTransition  （执行所有的钩子函数）
    
+
+## RouterView的逻辑
+找到<router-view/>要渲染的组件然后渲染
+```
+<!-- 对于嵌套的router-view,需要获取层级信息 -->
+const matched = route.matched[depth]
+const component = matched && matched.components[name]
+
+return h(component, data, children)
+
+```
+路由改变的时候怎么触发<router-view/>的重新渲染呢？
+<router-view/>访问了`parent.$route`,改改属性是响应式的，因此当路由改变的时候，this._rout就变了，那么作为依赖项<router-view/>就需要重新渲染了
+
+```
+Vue.util.defineReactive(this, '_route', this._router.history.current)
+```
+
+## Q&A
+1. `this.$router   this.$route` 是啥区别
+在install.js里其实很明确了，一个是vue-router对象，一个是当前路由信息
+```
+  this._router = this.$options.router
+  Vue.util.defineReactive(this, '_route', this._router.history.current)
+  Object.defineProperty(Vue.prototype, '$router', {
+    get () { return this._routerRoot._router }
+  })
+
+  Object.defineProperty(Vue.prototype, '$route', {
+    get () { return this._routerRoot._route }
+  })
+
+
+```

@@ -22,6 +22,7 @@ export default {
     const route = parent.$route
     const cache = parent._routerViewCache || (parent._routerViewCache = {})
 
+    // 拿到层级
     // determine current view depth, also check to see if the tree
     // has been toggled inactive but kept-alive.
     let depth = 0
@@ -56,6 +57,7 @@ export default {
     }
 
     const matched = route.matched[depth]
+    // 拿到要渲染的组件
     const component = matched && matched.components[name]
 
     // render empty node if no matched route or no config component
@@ -111,7 +113,7 @@ export default {
       })
       fillPropsinData(component, data, route, configProps)
     }
-
+    // 渲染该组件
     return h(component, data, children)
   }
 }
